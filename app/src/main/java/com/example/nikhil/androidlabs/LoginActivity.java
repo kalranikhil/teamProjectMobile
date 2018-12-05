@@ -6,74 +6,87 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
 
 public class LoginActivity extends Activity {
 
-    protected static final String ACTIVITY_NAME = "Login Activity";
-    protected static SharedPreferences prefs;
-    protected static  EditText login, password;
-    protected static Button loginButton;
+    private static final String TAG = LoginActivity.class.getSimpleName();
+    private EditText edit_email, edit_password;
+    private Button button_login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        try {
+            setContentView(R.layout.activity_login);
+        } catch (InflateException i) {
+        }
 
-        login = (EditText) findViewById(R.id.loginField);
-        password = (EditText) findViewById((R.id.passwordField));
-        loginButton = (Button) findViewById(R.id.loginButton);
-
-         prefs = getSharedPreferences("My Ids", Context.MODE_PRIVATE);
-        String email = prefs.getString("email",null);
-        String pass = prefs.getString("password",null);
-        login.setText(email);
-        password.setText(pass);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // SharedPreferences preferences = getSharedPreferences(null, Context.MODE_PRIVATE);
-                SharedPreferences.Editor edit = prefs.edit();
-
-                edit.putString("email",login.getText().toString());
-                edit.putString("password",password.getText().toString());
-                edit.commit();
-
-                Intent intent = new Intent(LoginActivity.this, StartActivity.class);
-                startActivity(intent);
-            }
-        });
+        Log.i(TAG, "In onCreate()");
 
 
-        Log.i(ACTIVITY_NAME,"in onCreate()");
+        button_login = (Button) findViewById(R.id.buttonLogin);
+        edit_email = (EditText) findViewById(R.id.EditTextLogin);
+        edit_password = (EditText) findViewById(R.id.EditTextPassword);
+        SharedPreferences sharedPref = getSharedPreferences("null", Context.MODE_PRIVATE);
+
+        String email = sharedPref.getString("email", "");
+            edit_email.setText(email);
+            button_login.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Login();
+                }
+            });
     }
 
-    public void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
-        Log.i(ACTIVITY_NAME,"in onResume()");
+        Log.i(TAG, "In onResume()");
     }
 
-    public void onStart() {
+    @Override
+    protected void onStart() {
         super.onStart();
-        Log.i(ACTIVITY_NAME,"in onStart()");
+        Log.i(TAG, "In onStart()");
     }
 
-    public void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
-        Log.i(ACTIVITY_NAME,"in onPause()");
+        Log.i(TAG, "In onPause()");
     }
 
-    public void onStop() {
+    @Override
+    protected void onStop() {
         super.onStop();
-        Log.i(ACTIVITY_NAME,"in onStop()");
+        Log.i(TAG, "In onStop()");
     }
 
-    public void onDestroy() {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
-        Log.i(ACTIVITY_NAME,"in onDestroy()");
+        Log.i(TAG, "In onDestroy()");
     }
 
+    //Save user info and login
+    public void Login() {
+        SharedPreferences sharedPref = getSharedPreferences("null", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("email", edit_email.getText().toString());
+        editor.putString("password", edit_password.getText().toString());
+        editor.apply();
+
+        Intent intent = new Intent(LoginActivity.this, StartActivity.class);
+        startActivity(intent);
+        //SharedPreferences sharedPrefs = getSharedPreferences("null" ,Context.MODE_PRIVATE);
+
+    }
 }

@@ -1,70 +1,130 @@
 package com.example.nikhil.androidlabs;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class StartActivity extends Activity {
 
-    protected static final String ACTIVITY_NAME = "Start Activity";
-    protected static Button button;
+    private static final String ACTIVITY_NAME = StartActivity.class.getSimpleName();
+    private TextView welcome;
+    private Button helloButton;
+    //  private Button chatButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        Log.i(ACTIVITY_NAME, "In onCreate()");
 
-        button=(Button) findViewById(R.id.listButton);
-        button.setOnClickListener(new View.OnClickListener() {
+
+        welcome = (TextView) findViewById(R.id.helloText);
+        helloButton = (Button) findViewById(R.id.buttonHello);
+        SharedPreferences sharedPref = getSharedPreferences("User info", Context.MODE_PRIVATE);
+
+        String email = sharedPref.getString("email", "");
+        welcome.setText(email);
+
+        helloButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this,ListItemsActivity.class);
-                startActivityForResult(intent,10);
+            public void onClick(View view) {
+                Intent intent = new Intent(StartActivity.this, ListItemsActivity.class);
+                startActivityForResult(intent, 10);
             }
         });
 
-        Log.i(ACTIVITY_NAME,"in onCreate()");
+        Button buttonChat = (Button) findViewById(R.id.StartChatbutton);
+        buttonChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(ACTIVITY_NAME, "User clicked Start Chat");
+                Intent intent = new Intent(StartActivity.this, ChatWindow.class);
+                startActivityForResult(intent, 10);
+            }
+        });
 
+        Button weatherButton = findViewById(R.id.buttonWeather);
+        weatherButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StartActivity.this, WeatherForecast.class);
+                startActivityForResult(intent, 10);
+            }
+        });
+
+        Button toolbarButton = findViewById(R.id.toolbar);
+        toolbarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StartActivity.this, TestToolbar.class);
+                startActivityForResult(intent, 10);
+            }
+        });
     }
 
-    public void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
-        Log.i(ACTIVITY_NAME,"in onResume()");
+        Log.i(ACTIVITY_NAME, "In onResume()");
     }
 
-    public void onStart() {
+    @Override
+    protected void onStart() {
         super.onStart();
-        Log.i(ACTIVITY_NAME,"in onStart()");
+        Log.i(ACTIVITY_NAME, "In onStart()");
     }
 
-    public void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
-        Log.i(ACTIVITY_NAME,"in onPause()");
+        Log.i(ACTIVITY_NAME, "In onPause()");
     }
 
-    public void onStop() {
+    @Override
+    protected void onStop() {
         super.onStop();
-        Log.i(ACTIVITY_NAME,"in onStop()");
+        Log.i(ACTIVITY_NAME, "In onStop()");
     }
 
-    public void onDestroy() {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
-        Log.i(ACTIVITY_NAME,"in onDestroy()");
+        Log.i(ACTIVITY_NAME, "In onDestroy()");
     }
 
-    public void onActivityResult(int requestCode, int responseCode, Intent data) {
-        if(requestCode == 10) {
-            Log.i(ACTIVITY_NAME,"Returned to StartActivity.onActivityResult");
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 10:
+                Log.i(ACTIVITY_NAME, "Returned to StartActivity.onActivityResult");
+                break;
+        }
+        switch (resultCode) {
+            case Activity.RESULT_OK:
+                String messagePassed = data.getStringExtra("Response");
+                Toast.makeText(this, messagePassed, Toast.LENGTH_LONG).show();
+                break;
         }
 
-        if(responseCode == Activity.RESULT_OK) {
-            String messagePassed = data.getStringExtra("Response");
-            Toast.makeText(getApplicationContext(),"ListItemsActivity passed: My information to share",Toast.LENGTH_SHORT);
-        }
     }
 
+   /* protected void startChatButton() {
+        Button chatButton = (Button) findViewById(R.id.StartChatbutton);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(ACTIVITY_NAME, "User clicked Start Chat");
+                Intent intent = new Intent(StartActivity.this, ChatWindow.class);
+                startActivityForResult(intent, 10);
+            }
+        });
+
+    }*/
 }
